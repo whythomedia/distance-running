@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Race Morning</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700;800&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c1220;
+    --card:#141d2e;
+    --card2:#1a2538;
+    --line:#26334a;
+    --ink:#e8edf5;
+    --dim:#9aa7bd;
+    --carb:#f5a524;
+    --carb2:#ffd07a;
+    --fat:#6b7a94;
+    --fat2:#3c4860;
+    --prot:#c97b63;
+    --go:#4fd1a5;
+    --bad:#ef6b5b;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Source Sans 3",system-ui,sans-serif;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  h1,h2,h3,.disp{font-family:"Barlow Condensed",system-ui,sans-serif;letter-spacing:.01em}
+  h1{font-size:clamp(52px,14vw,96px);line-height:.9;margin:0;font-weight:800;text-transform:uppercase}
+  h2{font-size:34px;line-height:1;margin:0 0 14px;font-weight:800;text-transform:uppercase}
+  h3{font-size:22px;margin:0 0 6px;font-weight:700;text-transform:uppercase;color:var(--carb2)}
+  p{margin:0 0 14px}
+  .wrap{max-width:640px;margin:0 auto;padding:0 18px 80px}
+  .eyebrow{font-family:"Barlow Condensed";font-weight:700;text-transform:uppercase;letter-spacing:.14em;font-size:13px;color:var(--carb)}
+  .dim{color:var(--dim)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin:14px 0}
+  .card.accent{border-color:var(--carb);box-shadow:0 0 0 1px rgba(245,165,36,.15) inset}
+  section{padding:44px 0 10px;border-top:1px solid var(--line)}
+  section:first-of-type{border-top:0}
+
+  /* tappable terms */
+  .t{appearance:none;background:none;border:0;padding:0 2px;margin:0;font:inherit;color:var(--carb2);cursor:pointer;border-bottom:2px dotted var(--carb);border-radius:2px}
+  .t:hover,.t:focus-visible{background:rgba(245,165,36,.12);outline:none}
+  .t:focus-visible{box-shadow:0 0 0 2px var(--carb)}
+
+  /* hero */
+  .hero{padding:36px 0 8px}
+  .hero .sub{font-size:20px;color:var(--dim);margin:14px 0 0}
+  .hero .sub b{color:var(--ink);font-weight:600}
+
+  /* plan schedule */
+  .sched{display:grid;grid-template-columns:72px 1fr;gap:0 14px;position:relative}
+  .sched::before{content:"";position:absolute;left:60px;top:10px;bottom:10px;width:2px;background:var(--line)}
+  .stop{display:contents}
+  .stop .time{font-family:"Barlow Condensed";font-weight:800;font-size:26px;line-height:1;color:var(--carb);padding-top:14px;text-align:right;padding-right:6px;position:relative}
+  .stop .time::after{content:"";position:absolute;right:-18px;top:19px;width:10px;height:10px;border-radius:50%;background:var(--carb);box-shadow:0 0 0 4px var(--bg)}
+  .stop .what{background:var(--card2);border-radius:12px;padding:12px 14px;margin:8px 0}
+  .stop .what h3{margin:0 0 2px;font-size:20px;color:var(--ink)}
+  .stop .what p{margin:0;color:var(--dim);font-size:16px}
+  .stop.gun .time{color:var(--go)}
+  .stop.gun .time::after{background:var(--go)}
+  .stop.gun .what{background:rgba(79,209,165,.1);border:1px solid rgba(79,209,165,.35)}
+  .rule{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 4px}
+  .pill{font-family:"Barlow Condensed";text-transform:uppercase;font-weight:700;font-size:14px;letter-spacing:.06em;padding:5px 10px;border-radius:999px;border:1px solid var(--line);color:var(--dim)}
+  .pill.on{border-color:var(--carb);color:var(--carb2)}
+  .pill.off{text-decoration:line-through;opacity:.7}
+
+  /* fuel cards */
+  .fuel{display:grid;grid-template-columns:1fr;gap:12px}
+  .fcard{border-radius:14px;padding:16px;border:1px solid var(--line);background:var(--card)}
+  .fcard .tag{font-family:"Barlow Condensed";font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px}
+  .fcard.c{border-color:rgba(245,165,36,.6)} .fcard.c .tag{color:var(--carb)}
+  .fcard.f{border-color:rgba(107,122,148,.7)} .fcard.f .tag{color:var(--fat)}
+  .fcard.p{border-color:rgba(201,123,99,.6)} .fcard.p .tag{color:var(--prot)}
+  .fcard h3{color:var(--ink);margin-bottom:4px}
+  .fcard p{margin:0;color:var(--dim);font-size:16px}
+  .meter{height:10px;border-radius:6px;background:var(--fat2);margin:10px 0 4px;overflow:hidden;display:flex}
+  .meter i{display:block;height:100%}
+  .meter .c{background:var(--carb)} .meter .f{background:var(--fat)} .meter .p{background:var(--prot)}
+  .meterlab{display:flex;justify-content:space-between;font-size:13px;color:var(--dim);text-transform:uppercase;font-family:"Barlow Condensed";letter-spacing:.08em}
+
+  /* battery */
+  .battery{display:flex;align-items:center;gap:14px;margin:10px 0 18px}
+  .batt{position:relative;width:110px;height:54px;border:3px solid var(--ink);border-radius:8px;padding:4px}
+  .batt::after{content:"";position:absolute;right:-10px;top:16px;width:7px;height:18px;background:var(--ink);border-radius:0 3px 3px 0}
+  .batt i{display:block;height:100%;width:85%;background:linear-gradient(90deg,var(--carb),var(--carb2));border-radius:3px}
+  .battery .lab{font-family:"Barlow Condensed";font-weight:700;text-transform:uppercase;font-size:18px;line-height:1.1}
+  .battery .lab small{display:block;color:var(--dim);font-weight:500;font-size:14px;text-transform:none;letter-spacing:0}
+
+
+
+  /* swaps */
+  details.swap{margin-top:8px;border-top:1px dashed var(--line);padding-top:8px}
+  details.swap summary{list-style:none;cursor:pointer;font-family:"Barlow Condensed";font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:13px;color:var(--carb);display:flex;align-items:center;gap:6px}
+  details.swap summary::-webkit-details-marker{display:none}
+  details.swap summary::before{content:"+";font-size:16px;line-height:1;transition:transform .2s}
+  details.swap[open] summary::before{transform:rotate(45deg)}
+  details.swap ul{margin:8px 0 6px;padding-left:18px;color:var(--ink);font-size:15px}
+  details.swap li{margin:2px 0}
+  details.swap p{font-size:14px;color:var(--dim);margin:0}
+
+  /* fold */
+  details.fold{padding:0}
+  details.fold summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:16px 18px}
+  details.fold summary::-webkit-details-marker{display:none}
+  details.fold summary h3{margin:0}
+  details.fold .chev{font-family:"Barlow Condensed";font-weight:800;font-size:26px;line-height:1;color:var(--carb);transition:transform .2s}
+  details.fold[open] .chev{transform:rotate(45deg)}
+  details.fold .fold-body{padding:0 18px 16px}
+
+  /* pipeline */
+  .pipe{display:grid;grid-template-columns:1fr;gap:0}
+  .stage{display:grid;grid-template-columns:40px 1fr;gap:12px;padding:12px 0}
+  .stage .n{width:34px;height:34px;border-radius:50%;border:2px solid var(--carb);display:grid;place-items:center;font-family:"Barlow Condensed";font-weight:800;font-size:16px;color:var(--carb);position:relative}
+  .stage:not(:last-child) .n::after{content:"";position:absolute;top:34px;left:15px;width:2px;height:calc(100% + 8px);background:var(--line)}
+  .stage h3{color:var(--ink);font-size:20px}
+  .stage p{color:var(--dim);font-size:16px;margin-bottom:6px}
+  .brake{display:inline-block;background:rgba(239,107,91,.12);border:1px solid rgba(239,107,91,.4);color:#ffb0a6;border-radius:8px;padding:6px 10px;font-size:15px;margin:4px 6px 4px 0}
+  .brake b{font-family:"Barlow Condensed";text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-right:4px}
+
+  /* timeline (signature) */
+  .tl{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 14px 10px;margin:14px 0}
+  .tl .title{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+  .tl .title h3{margin:0}
+  .tl .title .verdict{font-family:"Barlow Condensed";font-weight:800;text-transform:uppercase;font-size:15px;letter-spacing:.06em}
+  .tl.bad .verdict{color:var(--bad)} .tl.good .verdict{color:var(--go)}
+  .axis{position:relative;height:18px;margin:0 0 6px;font-family:"Barlow Condensed";font-size:12px;color:var(--dim);letter-spacing:.04em}
+  .axis span{position:absolute;transform:translateX(-50%)}
+  .lanes{position:relative}
+  .gunline{position:absolute;top:-24px;bottom:0;left:calc(100% - 0.01%);width:0;border-left:2px dashed var(--go)}
+  .gunline::before{content:"GUN";position:absolute;top:-2px;left:-34px;font-family:"Barlow Condensed";font-size:12px;font-weight:800;color:var(--go);letter-spacing:.1em}
+  .lane{display:grid;grid-template-columns:74px 1fr;align-items:center;gap:8px;margin:6px 0}
+  .lane .lab{font-family:"Barlow Condensed";font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);line-height:1.05}
+  .track{position:relative;height:22px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden}
+  .bar{position:absolute;top:3px;bottom:3px;border-radius:4px;font-family:"Barlow Condensed";font-size:12px;font-weight:700;letter-spacing:.04em;display:flex;align-items:center;padding:0 6px;white-space:nowrap;color:#0c1220}
+  .bar.c{background:linear-gradient(90deg,var(--carb) 0%,var(--carb) 55%,rgba(245,165,36,.25) 100%)}
+  .bar.f{background:var(--fat);color:var(--ink)}
+  .bar.glow{background:linear-gradient(90deg,rgba(245,165,36,.15),var(--carb));color:#0c1220}
+  .bar.empty{background:repeating-linear-gradient(45deg,rgba(239,107,91,.25) 0 6px,transparent 6px 12px);color:#ffb0a6;border:1px dashed rgba(239,107,91,.5)}
+  .tl .note{font-size:15px;color:var(--dim);margin:10px 0 4px}
+
+  /* autopsy list */
+  .aut li{margin:0 0 10px}
+  .aut b{color:var(--ink)}
+  ul{padding-left:20px}
+
+  /* check */
+  .q{display:flex;gap:12px;align-items:flex-start;margin:10px 0}
+  .q .qm{font-family:"Barlow Condensed";font-weight:800;font-size:28px;color:var(--go);line-height:1}
+
+  /* modal */
+  dialog{border:0;padding:0;background:transparent;max-width:min(92vw,520px);width:100%;color:var(--ink)}
+  dialog::backdrop{background:rgba(4,8,16,.7);backdrop-filter:blur(3px)}
+  .modal{background:var(--card2);border:1px solid var(--line);border-radius:16px;padding:22px 20px 18px;position:relative}
+  .modal .eyebrow{margin-bottom:2px}
+  .modal h2{font-size:32px;margin-bottom:8px}
+  .modal p{color:var(--ink);font-size:17px}
+  .modal #m-body p{margin-bottom:10px}
+  .modal p.dim{color:var(--dim);font-size:15px;margin-bottom:0}
+  .modal .x{position:absolute;top:10px;right:12px;background:none;border:0;color:var(--dim);font-size:28px;line-height:1;cursor:pointer;padding:4px 8px}
+  .modal .x:hover{color:var(--ink)}
+  .foot{margin-top:40px;text-align:center;color:var(--dim);font-size:14px}
+
+  @media (prefers-reduced-motion:no-preference){
+    .bar{animation:grow .7s ease-out both}
+    @keyframes grow{from{transform:scaleX(0);transform-origin:left}to{transform:scaleX(1);transform-origin:left}}
+  }
+  @media (min-width:520px){.fuel{grid-template-columns:1fr 1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HERO -->
+<header class="hero">
+  <div class="eyebrow">Cross country · race day</div>
+  <h1>Race<br>Morning</h1>
+  <p class="sub">Up at 4. Bus at 5. Gun at 8:30. The whole game is <b>full battery, empty stomach</b>. Tap any <button class="t" data-term="tap">glowing word</button> to see what it means.</p>
+</header>
+
+<!-- 1. THE PLAN -->
+<section id="plan">
+  <div class="eyebrow">The plan</div>
+  <h2>Eat in three small pieces, not one big one</h2>
+  <p class="dim">Each piece clears your stomach before the next one lands. The last one hits your blood right when you need it.</p>
+
+  <div class="sched">
+    <div class="stop">
+      <div class="time">4:15</div>
+      <div class="what"><h3>Bagel with jelly</h3><p>At the kitchen table. Nothing else. No eggs, no cheese, no bacon.</p>
+      <details class="swap"><summary>Not feeling a bagel?</summary>
+        <ul><li>Packet of instant oatmeal with honey</li><li>White rice with a pinch of salt and maple syrup</li><li>Two slices of white toast with jelly</li><li>Plain waffle or pancakes with syrup, no butter</li><li>Banana and a handful of pretzels</li></ul>
+        <p>Same rule every time: mostly carb, almost no fat, almost no fiber.</p>
+      </details></div>
+    </div>
+    <div class="stop">
+      <div class="time">6:00</div>
+      <div class="what"><h3>Fruit smoothie, sipped on the bus</h3><p>Banana, a little frozen fruit, juice or water, honey, pinch of salt. No yogurt, no milk, no protein powder. Insulated bottle so it's still cold.</p>
+      <details class="swap"><summary>Not feeling a smoothie?</summary>
+        <ul><li>20 oz bottle of Gatorade, sipped over the ride</li><li>Applesauce pouch and a banana</li><li>Two fig bars and water</li><li>A squeezie and a small handful of pretzels</li></ul>
+        <p>Anything that sips or goes down in two bites. Nothing that needs a fork.</p>
+      </details></div>
+    </div>
+    <div class="stop">
+      <div class="time">7:40</div>
+      <div class="what"><h3>Squeezies, then water only</h3><p>About 45 minutes before the gun. After this, sips of water and nothing else.</p>
+      <details class="swap"><summary>Not feeling a squeezie?</summary>
+        <ul><li>A handful of energy chews or gummy candy</li><li>Half a banana</li><li>8 oz of Gatorade</li><li>A honey packet</li></ul>
+        <p>Pure sugar, small, and done by 7:45.</p>
+      </details></div>
+    </div>
+    <div class="stop gun">
+      <div class="time">8:30</div>
+      <div class="what"><h3>Gun</h3><p>Light stomach. Full tank.</p></div>
+    </div>
+  </div>
+
+  <div class="rule">
+    <span class="pill on">Carbs first</span>
+    <span class="pill off">Fat</span>
+    <span class="pill off">Fiber</span>
+    <span class="pill off">Protein</span>
+    <span class="pill on">Spread it out</span>
+  </div>
+
+  <div class="card accent">
+    <h3>Two rules that outrank everything</h3>
+    <p style="margin-bottom:8px"><b>Rehearse it.</b> Run this exact sequence before a hard Tuesday workout. Race day is never the first rep.</p>
+    <p style="margin:0"><b>Burrito rides home in the cooler.</b> It's not a bad breakfast. It's a great lunch. Timing is the only problem.</p>
+  </div>
+</section>
+
+<!-- 2. HOW YOU'RE POWERED -->
+<section id="power">
+  <div class="eyebrow">Why it works</div>
+  <h2>How you're powered</h2>
+
+  <p>Almost everything with calories in it is one of <button class="t" data-term="macro">three things</button>. Your body does something different with each one, and only one of them runs a race.</p>
+
+  <div class="fuel">
+    <div class="fcard c">
+      <div class="tag">Fast fuel</div>
+      <h3><button class="t" data-term="carbs">Carbs</button></h3>
+      <p>Bread, rice, fruit, pasta, honey, sugar. Your body breaks these down into <button class="t" data-term="glucose">blood sugar</button> fast. Burns hot, burns quick.</p>
+    </div>
+    <div class="fcard f">
+      <div class="tag">Slow fuel</div>
+      <h3><button class="t" data-term="fat">Fat</button></h3>
+      <p>Bacon, cheese, butter, oil. Huge tank, tiny pump. Great for a six hour hike. Useless for 20 minutes at threshold.</p>
+    </div>
+    <div class="fcard p">
+      <div class="tag">Building material</div>
+      <h3><button class="t" data-term="protein">Protein</button></h3>
+      <p>Eggs, meat, whey. Not fuel at all. Bricks, not gas. You don't race on it, you rebuild with it afterward.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>The battery</h3>
+    <p>Here's the part that matters. When you eat carbs, your body turns them into blood sugar, and then packs whatever it doesn't need right now into storage inside your muscles and liver. That stored form is called <button class="t" data-term="glycogen">glycogen</button>. Think of it as a battery.</p>
+    <div class="battery">
+      <div class="batt"><i></i></div>
+      <div class="lab">Glycogen<small>carbs, stored in your legs, ready to go</small></div>
+    </div>
+    <p>A 5K runs almost entirely off that battery plus whatever sugar is already in your blood. The battery gets charged over the days before the race, mostly from dinner the night before. Race morning can't fill it. Race morning can only top it off and keep the stomach out of the way.</p>
+    <p style="margin:0" class="dim">Fat is the backup generator. It's always running a little, but it can't spin up fast enough to matter in a race this short.</p>
+  </div>
+
+  <details class="card fold">
+    <summary><h3>But what about the Bro-Tein</h3><span class="chev">+</span></summary>
+    <div class="fold-body">
+    <p>People talk a lot about protein. They're not wrong. Protein is critical for building and keeping muscle, and for people who aren't racing, it's usually the macro they're short on. That's why Dad eats protein-heavy and keeps carbs low: at 42, not running 5Ks, the goal is holding onto muscle and staying lean.</p>
+    <p style="margin:0">You are the opposite case on race morning. You already built the muscle. What you need is the <b>charge</b>, and protein doesn't charge the battery. Same food rules, different job, different answer. Protein is for the ride home.</p>
+    </div>
+  </details>
+</section>
+
+<!-- 3. THE PIPELINE -->
+<section id="pipe">
+  <div class="eyebrow">Where food actually goes</div>
+  <h2>The pipeline</h2>
+  <p>Food doesn't become fuel the second you swallow it. It moves through stages, and each stage takes time, more or less depending on what you ate and what your body is busy doing. The whole question of race morning is: <b>where is your breakfast at 8:30?</b></p>
+
+  <div class="pipe">
+    <div class="stage">
+      <div class="n">1</div>
+      <div>
+        <h3>Stomach</h3>
+        <p>A holding tank. It churns food and releases it downstream a little at a time. That release rate is called <button class="t" data-term="gastric">gastric emptying</button>. Carbs and liquids clear in about 1 to 2 hours. Fat takes 3 to 5. Anything still in here at the gun is dead weight that sloshes.</p>
+      </div>
+    </div>
+    <div class="stage">
+      <div class="n">2</div>
+      <div>
+        <h3>Small intestine</h3>
+        <p>The loading dock. Nutrients cross into your blood here. That's <button class="t" data-term="absorb">absorption</button>. Carbs are in your blood within about an hour of leaving the stomach. Fat takes several more hours, and it doesn't show up as usable race fuel anyway.</p>
+      </div>
+    </div>
+    <div class="stage">
+      <div class="n">3</div>
+      <div>
+        <h3>Blood</h3>
+        <p>Sugar in the blood is available <i>now</i>. This is what the squeezies are for: it skips the slow parts and lands here fast, right before the gun.</p>
+      </div>
+    </div>
+    <div class="stage">
+      <div class="n">4</div>
+      <div>
+        <h3>Legs</h3>
+        <p>Muscles pull from blood sugar and from their own glycogen battery. At the gun, your body also <button class="t" data-term="shunt">reroutes blood</button> away from your gut and toward your legs. Digestion basically pauses. Whatever's left in the stomach just sits there for the next 20 minutes.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Three brakes on the whole system</h3>
+    <p class="dim" style="margin-bottom:10px">How fast everything above moves is called <button class="t" data-term="motility">gut motility</button>. Race morning hits the brakes three times.</p>
+    <span class="brake"><b>Fat</b> triggers a hormone that tells the stomach to slow down and hold</span>
+    <span class="brake"><b>The hour</b> your gut runs slow at 4 AM, <button class="t" data-term="circadian">circadian timing</button></span>
+    <span class="brake"><b>Nerves</b> adrenaline shuts digestion down before a race</span>
+    <p style="margin:12px 0 0">Stack all three and a 4 hour job becomes a 6 to 8 hour job. That's the whole story of the burrito.</p>
+  </div>
+</section>
+
+<!-- 4. BURRITO AUTOPSY -->
+<section id="autopsy">
+  <div class="eyebrow">Putting it together</div>
+  <h2>Burrito autopsy</h2>
+  <p>Same clock, two breakfasts. The bars show what's still sitting in your stomach. The glow shows what's actually in your blood and ready to use.</p>
+
+  <div class="tl bad">
+    <div class="title"><h3>Burrito at 4:30</h3><span class="verdict">Backwards</span></div>
+    <div class="axis"><span style="left:0%">4:00</span><span style="left:22%">5:00</span><span style="left:44%">6:00</span><span style="left:67%">7:00</span><span style="left:89%">8:00</span></div>
+    <div class="lanes">
+      <div class="gunline"></div>
+      <div class="lane"><div class="lab">Stomach<br>carbs</div><div class="track"><div class="bar c" style="left:11%;width:40%">tortilla</div></div></div>
+      <div class="lane"><div class="lab">Stomach<br>fat</div><div class="track"><div class="bar f" style="left:11%;width:89%">bacon, cheese, eggs</div></div></div>
+      <div class="lane"><div class="lab">Fuel in<br>blood</div><div class="track"><div class="bar glow" style="left:22%;width:38%"></div><div class="bar empty" style="left:66%;width:34%">running low</div></div></div>
+    </div>
+    <p class="note">Carbs absorbed and burned off by 7. Fat still on board at 8:30. Heavy stomach, empty battery. That's the feeling at mile two.</p>
+  </div>
+
+  <div class="tl good">
+    <div class="title"><h3>Three small pieces</h3><span class="verdict">Lined up</span></div>
+    <div class="axis"><span style="left:0%">4:00</span><span style="left:22%">5:00</span><span style="left:44%">6:00</span><span style="left:67%">7:00</span><span style="left:89%">8:00</span></div>
+    <div class="lanes">
+      <div class="gunline"></div>
+      <div class="lane"><div class="lab">Stomach<br>carbs</div><div class="track"><div class="bar c" style="left:6%;width:30%">bagel</div><div class="bar c" style="left:44%;width:26%">smoothie</div><div class="bar c" style="left:82%;width:18%">squeezies</div></div></div>
+      <div class="lane"><div class="lab">Stomach<br>fat</div><div class="track"></div></div>
+      <div class="lane"><div class="lab">Fuel in<br>blood</div><div class="track"><div class="bar glow" style="left:18%;width:82%"></div></div></div>
+    </div>
+    <p class="note">Nothing heavy ever sits in the stomach. Fuel in the blood stays steady and peaks at the gun.</p>
+  </div>
+
+  <div class="card">
+    <h3>What we learned, in one breath</h3>
+    <ul class="aut">
+      <li><b>Only carbs run a 5K.</b> Fat is too slow, protein isn't fuel.</li>
+      <li><b>Glycogen is the battery.</b> Filled yesterday, topped off this morning.</li>
+      <li><b>Fat hits the brakes</b> on gastric emptying, so a burrito is still in your stomach at the gun.</li>
+      <li><b>4 AM and nerves</b> slow everything further. Every timeline stretches.</li>
+      <li><b>Small carb pieces, spaced out,</b> keep the stomach light and the blood sugar steady.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 5. AFTER -->
+<section id="after">
+  <div class="eyebrow">After the race</div>
+  <h2>Two questions</h2>
+  <div class="q"><div class="qm">?</div><p>Did your stomach feel fine the whole way?</p></div>
+  <div class="q"><div class="qm">?</div><p>Did you have legs in the last half mile?</p></div>
+  <p class="dim">If either answer is no, change one thing next time. One. Not three. Then eat the burrito.</p>
+</section>
+
+<!-- 6. BORN FOR THIS -->
+<section id="human">
+  <div class="eyebrow">Bonus</div>
+  <h2>Why humans are weirdly good at this</h2>
+  <p>Almost any animal your size beats you in a sprint. A house cat beats you. But stretch the distance out and the list of animals that can stay with a fit human on a warm day gets very short, and past about 20 miles it's basically empty. Distance running isn't something humans do in spite of our bodies. It's what the body was built for.</p>
+
+  <div class="card">
+    <h3>The hardware</h3>
+    <ul class="aut">
+      <li><b>We <button class="t" data-term="sweat">sweat</button>, everywhere.</b> Most mammals cool by panting, which stops working once they're running hard. We shed heat through millions of sweat glands on bare skin while running full speed. Heat, not fatigue, is what stops most animals.</li>
+      <li><b>Springs in the legs.</b> The Achilles tendon and the arch of the foot store energy on landing and give it back on push-off. Chimps, our closest relatives, have almost no Achilles and can't run far at all.</li>
+      <li><b>Breathing on our own schedule.</b> A four-legged animal's lungs are squeezed by its own gallop, one breath per stride, no choice. Standing upright freed our breathing from our stride, so we can take in air at whatever rate the pace demands.</li>
+      <li><b>Big glutes, long legs, a ligament to hold the head still.</b> None of these matter for walking. All of them matter for running. They all show up in the fossil record about the same time.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Why it mattered</h3>
+    <p>Long before spears were any good, people hunted by <button class="t" data-term="persist">running animals down</button>. Not faster, just longer. Pick an antelope on a hot day, keep it moving, never let it rest in the shade, and in a few hours it overheats and stops. The human, sweating and carrying water, jogs up to it. Some groups still hunt this way.</p>
+    <p style="margin:0">Which brings this back to the bagel. All of that hardware only works if two systems are fed: the muscles need fuel and the skin needs blood for cooling. Your body is juggling both the whole race, and it can't afford to have a third system, a stomach full of bacon, competing for the same supply. Race morning eating is just making sure the machine you were born with gets to do its thing.</p>
+  </div>
+</section>
+
+</div>
+
+<!-- MODAL -->
+<dialog id="dlg">
+  <div class="modal">
+    <button class="x" aria-label="Close">&times;</button>
+    <div class="eyebrow" id="m-eye"></div>
+    <h2 id="m-title"></h2>
+    <div id="m-body"><p></p></div>
+    <p class="dim" id="m-dim"></p>
+  </div>
+</dialog>
+
+<script>
+const TERMS = {
+  tap:{eye:"How this works",title:"Glowing words",body:"Anything underlined in gold opens a little more than the page says: the numbers, the mechanism, the thing a coach would tell you if you asked a follow-up. Nothing here is required to use the plan.",dim:"Tap outside the box or hit the X to close."},
+  carbs:{eye:"Macro · fast fuel",title:"Carbohydrates",body:"Every carb is a chain of sugar molecules, and digestion is just cutting the chain apart. Simple carbs (honey, jelly, fruit, sports drink) are short chains, so they're in your blood in 15 to 30 minutes. Complex carbs (bagel, rice, oatmeal) are long chains and take 60 to 90 minutes. Both are fine pre-race, they just belong at different times: long chains early, short chains late.\n\nFiber is technically a carb too, but your body can't cut it apart, so it sits in the gut holding water. That's why beans, bran, and a big pile of berries are off the list.",dim:"Target for the whole morning: about 1 gram of carb per pound of body weight, spread over the three stops."},
+  glucose:{eye:"The currency",title:"Blood sugar (glucose)",body:"There's only about a teaspoon of sugar in your entire bloodstream at any moment. That's why timing matters so much: it's a small pool that's constantly being refilled from your gut and your liver, and drained by your muscles.\n\nHere's the catch with eating right before the gun. A hit of sugar 20 to 40 minutes out triggers insulin, which pulls sugar out of your blood and into storage. If the gun goes off right as insulin peaks, you start the race with blood sugar dipping, not rising. Eat 45+ minutes out and the wave has passed. Eat inside 10 minutes and the race starts before insulin can respond.\n\nWhy is soccer different? A 90-minute match actually drains the glycogen battery, so eating during the game matters. And once you're moving, working muscles pull sugar out of the blood without needing insulin, so the dip problem fades after the first few minutes. A 20-minute race is almost all battery, and you never get past the part where timing matters.",dim:"That's the whole reason the squeezies are at 7:40 and not 8:15."},
+  fat:{eye:"Macro · slow fuel",title:"Fat",body:"Fat carries 9 calories per gram, more than double carbs or protein, which is why it's the body's preferred long-term storage. Even a lean runner has 50,000+ calories of it on board. The problem is the pump, not the tank: your muscles can only burn fat at a limited rate, enough for easy running but nowhere near 5K pace.\n\nAs for why it stalls your stomach: when fat reaches the small intestine, cells there release a hormone called CCK, which tells the stomach to close its exit valve and hold food. More fat, more CCK, longer hold. A bacon-and-cheese breakfast can keep the stomach partly full for 5 hours.",dim:"Fat at dinner the night before is fine. Fat after 9 PM on race eve and anytime race morning is not."},
+  protein:{eye:"Macro · building material",title:"Protein",body:"Protein is made of amino acids, and your body's main use for them is building: muscle, tendon, enzymes, red blood cells. It can burn them for energy in an emergency, but it has to strip the nitrogen off first, which is slow and wasteful. A high school runner needs roughly 0.7 grams per pound per day, which almost everyone gets without trying.\n\nWhere it matters most for you is the 30 to 90 minutes after a hard race or workout, when muscles are primed to repair. Chocolate milk, a burrito, a chicken sandwich: that's the window. Before a race, protein mostly slows gastric emptying and adds nothing.",dim:"Whey shakes are built for lifters refilling muscle after a session, not runners fueling before one."},
+  glycogen:{eye:"The battery",title:"Glycogen",body:"Your muscles hold about 400 grams of glycogen and your liver about 100, roughly 2,000 calories total. That sounds like a lot for a 20-minute race, and it is, but the battery doesn't drain evenly: at race pace you're burning glycogen many times faster than at easy pace, and the muscles doing the work each have their own local supply. When your calves run low, the glycogen in your arms doesn't help.\n\nTwo more useful facts. Each gram of glycogen is stored with about 3 grams of water, which is why a big carb dinner makes you feel slightly heavy the next morning, and why you're 2 pounds lighter after a hard race. And the liver's share is what keeps blood sugar steady between meals, including that 4:15 to 6:00 gap on the bus.",dim:"Charging happens at dinner the night before and in the 24 hours after a hard workout. Race morning is maintenance only."},
+  gastric:{eye:"Pipeline · stage 1",title:"Gastric emptying",body:"The stomach releases food through a valve at the bottom called the pylorus, a few milliliters at a time, and it makes that decision based on what the small intestine reports back. Liquids and dissolved sugars get waved through almost immediately. Solids have to be ground down to small particles first. Fat and heavy protein trigger a hold signal. Volume matters too: a big meal stretches the stomach and empties faster per minute but takes longer overall.\n\nRunning makes it worse. Every footstrike bounces whatever is in there, and blood that would be doing the work is in your legs instead.",dim:"Rule of thumb a sports dietitian would give you: 3 to 4 hours for a full meal, 1 to 2 for a carb snack, 30 minutes for a liquid."},
+  absorb:{eye:"Pipeline · stage 2",title:"Absorption",body:"The wall of the small intestine is covered in tiny transporters that grab sugar molecules and pass them into the blood. There's a speed limit: about 60 grams of glucose per hour through the main transporter. Fructose (fruit sugar) uses a different door, which is why a mix of the two absorbs faster than either alone, and why fruit plus a bagel works better than a bagel by itself.\n\nThis is also why sports drinks are about 6 percent sugar. Stronger than that and the sugar pulls water into the gut faster than the transporters can clear it, which is how you end up with sloshing and cramps from something that was supposed to help.",dim:"A smoothie sipped over 30 minutes stays inside the speed limit. Chugged in 3 minutes, it doesn't."},
+  motility:{eye:"The throttle",title:"Gut motility",body:"Your gut has its own nervous system, sometimes called the second brain, with as many nerve cells as a cat's whole brain. It talks to the main brain through the vagus nerve, and the main brain can turn it up or down.\n\nRest-and-digest mode turns it up. Fight-or-flight mode turns it down hard, because your body figures you don't need to digest lunch if you're about to sprint from something. A starting line is fight-or-flight by design. That's the pre-race stomach feeling, and it's also why a fatty breakfast that would have been fine on a Saturday is a disaster on race day.",dim:"You can't turn nerves off. You can make sure there's nothing in the stomach for them to mess with."},
+  macro:{eye:"The vocabulary",title:"Macronutrients",body:"Carbs, fat, and protein are the three macronutrients: the things you eat in large amounts (macro) that carry calories. Everything on a nutrition label's top half is one of these. But they're not everything in food. Micronutrients are vitamins and minerals, needed in tiny amounts, carrying no energy, but running the machinery that turns macros into motion. Iron carries oxygen in your blood, which is a big deal for a runner. Sodium and potassium are what your nerves and muscles fire on, and you sweat them out, which is why there's a pinch of salt in the smoothie. Water is its own category and fiber is a carb your body can't burn.\n\nSo: three macros carry the fuel, micros make the engine run, and the sentence on the page says almost everything for a reason.",dim:"A bagel has no micronutrients worth mentioning. That's fine. It has one job."},
+  shunt:{eye:"The traffic cop",title:"Blood shunting",body:"You have about five liters of blood and it can't be everywhere at full pressure at once. So your body is constantly deciding where it goes. At rest, roughly a quarter of it is flowing through your gut, digesting. Your working muscles get about a fifth. Go to race pace and that flips hard: muscles can take 80 percent or more, your skin takes a big share for cooling, and the gut gets squeezed down to a fraction of its resting supply. Tiny muscles in the walls of your arteries clamp down in one place and open up in another, in seconds, run by the same nervous system that controls your heart rate.\n\nThat's the physics of it. You can't make more blood in 20 minutes. You can only move it. A stomach full of fat at the gun isn't just uncomfortable, it's an unpaid bill: it needs blood your legs and skin are already using.",dim:"Same reason you shouldn't swim right after eating. That one's mostly myth. This one isn't."},
+  sweat:{eye:"The cooling system",title:"Sweating",body:"Running hard makes heat, a lot of it, and if you couldn't dump it your core temperature would hit dangerous levels in about 15 minutes. Humans have two to four million sweat glands and almost no fur, so water spreads over the skin and evaporates, pulling heat with it. A dog has sweat glands basically only on its paws and has to pant, which means it can't both cool down and breathe hard at the same time. We can.\n\nThis is also why the body sends so much blood to the skin during a race: the heat has to travel from the muscles to the surface, and blood is the delivery truck. Cooling and fueling are competing for the same trucks, which is one more reason to keep the stomach out of it.",dim:"The trade-off is water and salt. A 5K in Texas in August can cost you a pound or two."},
+  persist:{eye:"The original sport",title:"Persistence hunting",body:"Documented among the San people of the Kalahari, and probably how early humans got meat for a very long time. Pick the hottest part of the day. Pick one animal and track it when it runs out of sight, which is where the big human brain comes in. Keep it moving so it never gets to stop and pant in the shade. Antelope can't sweat effectively and can't drink on the run, so after two to five hours of this they collapse from heat, not exhaustion. The hunter walks up.\n\nA modern version: the Man versus Horse Marathon in Wales, 22 miles over hills. Horses usually win, but on hot years humans have beaten them outright, and the gap narrows every time the temperature goes up.",dim:"Nobody out-sprints a gazelle. The whole human strategy is not needing to."},
+  circadian:{eye:"The clock",title:"Circadian timing",body:"Your core temperature bottoms out around 4 to 5 AM, and digestion is partly a chemical reaction, so it literally runs slower when you're cooler. Stomach acid and digestive enzymes are at their lowest output of the day.\n\nInsulin sensitivity is also lower in the early morning, so the same carbs raise blood sugar a little higher and stay up a little longer, which is actually in your favor. By 8:30 your body has mostly woken up, but your stomach got a late start on whatever you fed it at 4:15. Net effect: early breakfast takes longer to clear, so keep it simple and give it a head start.",dim:"It's also why the warm-up matters more for an 8:30 race than a 4 PM one. Your body needs convincing it's daytime."}
+};
+const dlg=document.getElementById('dlg');
+document.querySelectorAll('.t').forEach(b=>{
+  b.addEventListener('click',()=>{
+    const t=TERMS[b.dataset.term]; if(!t) return;
+    document.getElementById('m-eye').textContent=t.eye;
+    document.getElementById('m-title').textContent=t.title;
+    document.getElementById('m-body').innerHTML=t.body.split('\n\n').join('</p><p>');
+    document.getElementById('m-dim').textContent=t.dim||'';
+    dlg.showModal();
+  });
+});
+dlg.querySelector('.x').addEventListener('click',()=>dlg.close());
+dlg.addEventListener('click',e=>{ if(e.target===dlg) dlg.close(); });
+</script>
+</body>
+</html>
