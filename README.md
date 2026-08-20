@@ -4,35 +4,46 @@ A one-page guide to eating before an early cross country race. Built for a high 
 
 No framework, no build step. One HTML file with inline CSS and vanilla JS.
 
+Live at <https://whythomedia.github.io/distance-running/>.
+
 ## What's here
 
 ```
-index.html          the page
-og-image.png        1200x630 social preview
-favicon.svg         battery icon (default)
-favicon.ico
-apple-touch-icon.png
-icon-192.png
-icon-512.png
-head-snippet.html   meta tags to paste into <head>
-icon-shoe-option/   alternate running shoe icon set
+index.html                    the page (all content, styles, and JS)
+site.webmanifest              name, colors, and app icons
+.nojekyll                     serve the files as-is on GitHub Pages
+assets/
+  og-image.png                1200x630 social preview
+  favicon.svg                 battery icon (default)
+  favicon.ico
+  apple-touch-icon.png        180x180
+  icon-192.png
+  icon-512.png
+  icon-shoe-option/           alternate running shoe icon set, same filenames
 ```
 
 ## Deploy
 
-Static hosting, anywhere.
+Static hosting, anywhere. It's already wired for GitHub Pages: push to `main` and enable Pages
+(Settings → Pages → deploy from branch `main`, folder `/`).
+
+For any other host — `npx vercel`, Netlify Drop, whatever — the only thing to change is the
+absolute URL in the social tags. Icons and the manifest use relative paths and follow the files.
 
 ```
-npx vercel
+sed -i '' 's|https://whythomedia.github.io/distance-running|https://your-url.example|g' index.html
 ```
 
-or drag the folder onto Netlify Drop, or push to GitHub and enable Pages.
-
-After the first deploy, open `head-snippet.html`, replace `YOUR_URL` with the live URL, and paste the block into `<head>` in `index.html` so link previews work.
+Those tags have to be absolute: crawlers fetch `og:image` without a page to resolve it against,
+which is why a relative path there is the usual reason a link preview comes up blank.
 
 ## Using the shoe icon
 
-Move the files out of `icon-shoe-option/` to the root and drop the `shoe-` prefix. Filenames will then match the head snippet.
+The alternate set uses the same filenames as the default one, so swapping is a copy:
+
+```
+cp assets/icon-shoe-option/* assets/
+```
 
 ## Editing content
 
